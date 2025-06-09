@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { performNR_RRFlash } from "./FlashCalcs.js";
 import { performPR_EOS_RRFlash } from "./FlashCalcs.js";
@@ -51,13 +51,29 @@ const CrudeDistillationColumn = () => {
 
   const [lastFlashType, setLastFlashType] = useState(null);
 
+  function setDefaultTrayInfo() {
+    const defaultTrayInfo = Array(totalTrays).fill("");
+    defaultTrayInfo[0] = `Tray 1: Overhead vapor (C1–C4)`;
+    defaultTrayInfo[4] = `Tray 5: Light Naphtha draw-off`;
+    defaultTrayInfo[9] = `Tray 10: Heavy Naphtha draw-off`;
+    defaultTrayInfo[14] = `Tray 15: Kerosene draw-off`;
+    defaultTrayInfo[19] = `Tray 20: Diesel draw-off`;
+    defaultTrayInfo[24] = `Tray 25: Gas Oil draw-off`;
+    defaultTrayInfo[29] = `Tray 30+: Atmospheric Residue`;
+    setTrayInfo(defaultTrayInfo);
+  }
+
+  useEffect(() => {
+    setDefaultTrayInfo();
+  }, []);
+
   const handleCrudeChange = (e) => {
     const selected = e.target.value;
     setSelectedCrude(selected);
     const comp = crudeCompositions[selected] || Array(8).fill(0.0);
     setFeedCompositions(comp.map((val) => val.toFixed(2)));
     setResult(null);
-    setTrayInfo(Array(totalTrays).fill("")); // Clear tray display
+    setDefaultTrayInfo();
     setLastFlashType(null); // Reset flash button color
   };
 
@@ -66,7 +82,7 @@ const CrudeDistillationColumn = () => {
     updated[index] = value;
     setFeedCompositions(updated);
     setResult(null);
-    setTrayInfo(Array(totalTrays).fill("")); // Clear tray display
+    setDefaultTrayInfo();
     setLastFlashType(null); // Reset flash button color
   };
 
@@ -283,7 +299,7 @@ const CrudeDistillationColumn = () => {
               onChange={(e) => {
                 setFeedRate(e.target.value);
                 setResult(null);
-                setTrayInfo(Array(totalTrays).fill(""));
+                setDefaultTrayInfo();
                 setLastFlashType(null); // Reset flash button color
               }}
               style={{ width: "100px", ...sharedInputStyle }}
